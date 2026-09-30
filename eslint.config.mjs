@@ -31,5 +31,12 @@ export default tseslint.config(
       'vue/no-mutating-props': 'error',
     },
   },
+  {
+    languageOptions: {
+      globals: {
+        __APP_VERSION__: 'readonly',
+      },
+    },
+  },
   prettier,
 );
