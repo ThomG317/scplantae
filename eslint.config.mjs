@@ -1,4 +1,5 @@
 import eslint from '@eslint/js';
+import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 import vue from 'eslint-plugin-vue';
 import vueParser from 'vue-eslint-parser';
@@ -34,6 +35,8 @@ export default tseslint.config(
   {
     languageOptions: {
       globals: {
+        ...globals.browser,
+        ...globals.node,
         __APP_VERSION__: 'readonly',
       },
     },
