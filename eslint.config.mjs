@@ -3,6 +3,7 @@ import prettier from 'eslint-config-prettier';
 import vue from 'eslint-plugin-vue';
 import vueParser from 'vue-eslint-parser';
 import tseslint from 'typescript-eslint';
+import globals from 'globals';
 
 export default tseslint.config(
   { ignores: ['dist/**'] },
@@ -34,6 +35,7 @@ export default tseslint.config(
   {
     languageOptions: {
       globals: {
+        ...globals.browser,
         __APP_VERSION__: 'readonly',
       },
     },
