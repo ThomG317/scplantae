@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from 'node:url';
 import { copyFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
 
@@ -29,7 +30,7 @@ export default defineConfig(({ command, mode }) => {
     define: {
       __APP_VERSION__: JSON.stringify(packageJson.version),
     },
-    plugins: [vue()],
+    plugins: [vue(), tailwindcss()],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

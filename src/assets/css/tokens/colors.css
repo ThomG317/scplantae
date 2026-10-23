@@ -1,0 +1,40 @@
+@theme {
+  --color-*: initial;
+}
+
+/* Default light theme. Future themes override semantic tokens, not the palette. */
+:root {
+  --bg-neutral: var(--palette-neutral-900);
+  --bg-neutral-light: var(--palette-neutral-600);
+  --bg-neutral-lighter: var(--palette-neutral-100);
+  --bg-neutral-lightest: var(--palette-neutral-white);
+  --bg-primary: var(--palette-green-700);
+  --bg-primary-light: var(--palette-green-200);
+  --bg-success-light: var(--palette-green-200);
+  --bg-info-light: var(--palette-blue-200);
+  --bg-warning-light: #f7f2dfff;
+  --bg-error: #ac4545ff;
+  --bg-error-light: #f9e8e8ff;
+  --bg-disabled: var(--palette-neutral-100);
+
+  --text-neutral: var(--palette-neutral-900);
+  --text-neutral-light: var(--palette-neutral-500);
+  --text-primary: var(--palette-green-800);
+  --text-on-dark: var(--palette-neutral-white);
+  --text-success: var(--palette-green-800);
+  --text-info: var(--palette-blue-800);
+  --text-warning: #7b6b2dff;
+  --text-error: #ac4545ff;
+  --text-disabled: var(--palette-neutral-500);
+
+  --border-card: var(--palette-neutral-200);
+  --border-neutral: var(--palette-neutral-900);
+  --border-neutral-light: var(--palette-neutral-400);
+  --border-success: var(--palette-green-700);
+  --border-error: #ac4545ff;
+
+  --state-on-hover: color-mix(in srgb, var(--bg-neutral) 8%, transparent);
+  --state-on-active: color-mix(in srgb, var(--bg-neutral) 16%, transparent);
+  --state-on-dark-hover: color-mix(in srgb, var(--bg-neutral-lightest) 20%, transparent);
+  --state-on-dark-active: color-mix(in srgb, var(--bg-neutral) 20%, transparent);
+}
