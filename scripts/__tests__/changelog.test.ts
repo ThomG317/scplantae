@@ -134,3 +134,110 @@ it('categorizes legacy flat entries while preserving manual notes and custom sec
   generate();
   expect(readChangelog()).toContain('### Added\n\n- :sparkles: Next feature\n- ✨ Existing feature');
 });
+
+it('ignores handwritten version bumps without excluding dependency updates or feature titles', () => {
+  generate();
+  const previous = readChangelog();
+  for (const title of [
+    'Bump',
+    'BUMP VERSION',
+    '🔖 Bump version to 0.2.0',
+    ':bookmark: chore(release): bump to v0.2.0',
+    'chore: bump: 0.2.0',
+    'Version bump 0.2.0',
+    'Bump application version',
+    'Bump to version 0.2.0',
+  ]) {
+    commit(title);
+  }
+  generate();
+  expect(readChangelog()).toBe(previous);
+  for (const title of ['⬆️ Bump vite to 8.3.5', 'Bump dependencies', '✨ Add version selector', '🐛 Fix version bump detection']) {
+    commit(title);
+    generate();
+    expect(readChangelog()).toContain(`- ${title}`);
+  }
+});
+
+it('excludes real merge commits regardless of their subject while retaining merged changes', () => {
+  git('checkout', '-b', 'feature');
+  commit('✨ Add merged feature');
+  git('checkout', '-');
+  commit('🐛 Fix on base branch');
+  git('merge', '--no-ff', 'feature', '-m', 'Custom integration title');
+  generate();
+  const result = readChangelog();
+  expect(result).not.toContain('Custom integration title');
+  expect(result).toContain('- ✨ Add merged feature');
+  expect(result).toContain('- 🐛 Fix on base branch');
+  generate();
+  expect(readChangelog()).toBe(result);
+});
+
+it('starts after the latest version bump and preserves existing changelog content', () => {
+  commit('✨ Old undocumented feature');
+  commit('🔖 Bump version to 0.1.0');
+  commit('🐛 Change before latest update');
+  commit(':bookmark: chore(release): BUMP to v0.2.0');
+  commit('✨ Current feature');
+  generate();
+  const result = readChangelog();
+  expect(result).toContain('- ✨ Current feature');
+  expect(result).not.toContain('Initial commit');
+  expect(result).not.toContain('Old undocumented feature');
+  expect(result).not.toContain('Change before latest update');
+  expect(result).toContain('Old draft');
+  expect(result).toContain('## [0.0.1]\n\n- Published entry');
+  generate();
+  expect(readChangelog()).toBe(result);
+  commit('Version bump 0.3.0');
+  generate();
+  expect(readChangelog()).toBe(result);
+  commit('🐛 Next fix');
+  generate();
+  expect(readChangelog()).toContain('- 🐛 Next fix');
+  expect(readChangelog()).toContain('- ✨ Current feature');
+});
+
+it('includes side-branch changes merged after the boundary even when committed before it', () => {
+  git('checkout', '-b', 'feature');
+  commit('✨ Earlier feature');
+  git('checkout', '-');
+  commit('Bump application version to 0.1.0');
+  git('merge', '--no-ff', 'feature', '-m', 'Merge feature');
+  generate();
+  expect(readChangelog()).toContain('- ✨ Earlier feature');
+  expect(readChangelog()).not.toContain('Initial commit');
+  expect(readChangelog()).not.toContain('Merge feature');
+});
+
+it('does not use unreachable bumps or message-body mentions as the boundary', () => {
+  git('checkout', '-b', 'unrelated');
+  commit('Bump version to 0.1.0');
+  git('checkout', '-');
+  commit('✨ Actual feature\n\nBump version to 0.1.0');
+  generate();
+  expect(readChangelog()).toContain('- Initial commit');
+  expect(readChangelog()).toContain('- ✨ Actual feature');
+});
+
+it('does not treat dependency bumps or historical changelog updates as release boundaries', () => {
+  commit('✨ Feature before maintenance');
+  commit('⬆️ Bump vite to 8.3.5');
+  commit(':memo: Update changelog');
+  commit('✨ New feature');
+  generate();
+  expect(readChangelog()).toContain('- Initial commit');
+  expect(readChangelog()).toContain('- ✨ Feature before maintenance');
+  expect(readChangelog()).toContain('- ⬆️ Bump vite to 8.3.5');
+  expect(readChangelog()).toContain('- ✨ New feature');
+  expect(readChangelog()).not.toContain(':memo: Update changelog');
+});
+
+it('leaves the changelog unchanged when HEAD is the version bump', () => {
+  commit('✨ Earlier feature');
+  commit('chore: bump version to 0.2.0');
+  const previous = readChangelog();
+  generate();
+  expect(readChangelog()).toBe(previous);
+});
