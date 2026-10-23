@@ -2,13 +2,21 @@ name: CI
 
 on:
   push:
+    branches-ignore:
+      - main
+      - 'release/**'
   pull_request:
-  workflow_dispatch:
+    types: [opened, synchronize, reopened, edited]
+  workflow_call:
     inputs:
       ref:
-        description: Git ref to deploy (branch, tag or commit)
-        required: true
+        description: Git ref to validate and build
         type: string
+        default: ''
+      upload-pages-artifact:
+        description: Upload the validated build for GitHub Pages
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -22,7 +30,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -49,30 +57,7 @@ jobs:
         run: npm run build
 
       - name: Upload GitHub Pages artifact
-        if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+        if: ${{ inputs.upload-pages-artifact }}
         uses: actions/upload-pages-artifact@v5
         with:
           path: dist
-
-  deploy:
-    name: Deploy to GitHub Pages
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
-    needs: checks
-    runs-on: ubuntu-latest
-    concurrency:
-      group: github-pages
-      cancel-in-progress: false
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v6
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5

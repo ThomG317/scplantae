@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "changelog": "node scripts/changelog.mjs",
     "dev": "vite",
     "lint": "eslint .",
     "type-check": "vue-tsc -b",
@@ -32,8 +33,8 @@
     "prettier": "^3.9.9",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.71.0",
-    "vite": "^8.3.0",
-    "vitest": "^5.0.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5",
     "vue-tsc": "^3.3.11"
   }
 }
