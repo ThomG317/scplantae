@@ -15,7 +15,7 @@ beforeEach(() => {
   directory = mkdtempSync(join(tmpdir(), 'scplantae-changelog-'));
   mkdirSync(join(directory, 'scripts'));
   copyFileSync(new URL('../changelog.mjs', import.meta.url), join(directory, 'scripts/changelog.mjs'));
-  writeFileSync(join(directory, 'CHANGELOG.md'), '# Changelog\n\n## [Unreleased]\n\nOld draft\n\n## [0.0.1]\n\nPublished entry\n');
+  writeFileSync(join(directory, 'CHANGELOG.md'), '# Changelog\n\n## [Unreleased]\n\nOld draft\n\n## [0.0.1]\n\n- Published entry\n');
   git('init');
   git('config', 'user.name', 'Changelog test');
   git('config', 'user.email', 'changelog@example.test');
@@ -31,21 +31,20 @@ it('includes only subjects without tags, preserves releases and is repeatable', 
   commit('New feature\n\nDetailed explanation\nSecond line');
   generate();
   const result = readChangelog();
-  expect(result).toBe('# Changelog\n\n## [Unreleased]\n\n- New feature\n- Initial commit\n\n## [0.0.1]\n\nPublished entry\n');
+  expect(result).toBe('# Changelog\n\n## [Unreleased]\n\n- New feature\n- Initial commit\n\nOld draft\n\n## [0.0.1]\n\n- Published entry\n');
   generate();
   expect(readChangelog()).toBe(result);
 });
 
-it('uses the closest release tag and ignores unrelated tags', () => {
+it('excludes titles already listed in published releases and ignores tags', () => {
+  commit('Published entry');
   git('tag', 'v0.1.0');
-  commit('Already released');
-  git('tag', 'v0.2.0');
   commit('Upcoming fix');
-  git('tag', 'preview');
   generate();
   expect(readChangelog()).toContain('- Upcoming fix');
-  expect(readChangelog()).not.toContain('Already released');
-  expect(readChangelog()).not.toContain('Initial commit');
+  expect(readChangelog()).toContain('- Initial commit');
+  expect(readChangelog().match(/^- Published entry$/gm)).toHaveLength(1);
+  expect(readChangelog()).toContain('## [0.0.1]\n\n- Published entry');
 });
 
 it('ignores automated changelog commits, including on subsequent runs', () => {
@@ -60,10 +59,22 @@ it('ignores automated changelog commits, including on subsequent runs', () => {
   expect(readChangelog()).not.toContain(':memo: Update changelog');
 });
 
-it('leaves an empty Unreleased section when HEAD is tagged', () => {
-  git('tag', 'v0.1.0');
+it('deduplicates identical commit titles and preserves manual entries', () => {
+  commit('Repeated title');
+  commit('Repeated title');
   generate();
-  expect(readChangelog()).toBe('# Changelog\n\n## [Unreleased]\n\n## [0.0.1]\n\nPublished entry\n');
+  expect(readChangelog().match(/^- Repeated title$/gm)).toHaveLength(1);
+  expect(readChangelog()).toContain('Old draft');
+  const result = readChangelog();
+  generate();
+  expect(readChangelog()).toBe(result);
+});
+
+it('preserves the file exactly when every title is already documented', () => {
+  const content = '# Changelog\n\n## [Unreleased]\n\nManual note\n\n## [0.1.0]\n\n- Initial commit\n';
+  writeFileSync(join(directory, 'CHANGELOG.md'), content);
+  generate();
+  expect(readChangelog()).toBe(content);
 });
 
 it('fails without changing a changelog that has no Unreleased section', () => {
