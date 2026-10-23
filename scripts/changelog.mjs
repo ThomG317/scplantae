@@ -27,6 +27,15 @@ const categoryFor = (title) => {
   return 'Maintenance';
 };
 
+const isVersionBump = (title) => {
+  // Accept handwritten release titles with Gitmoji and optional conventional prefixes.
+  const message = title
+    .replace(/^(?:\s|:[a-z_+-]+:|[^\p{L}\p{N}])+/u, '')
+    .replace(/^(?:chore|build|release)(?:\([^)]*\))?\s*:\s*/i, '')
+    .replace(/^bump\s*[:–-]\s*/i, 'bump ');
+  return /^(?:bump(?:\s+(?:to\s+)?(?:the\s+)?(?:(?:app|application|package)\s+)?version\b|\s+(?:to\s+)?v?\d+\.\d+|\s*$)|version\s+bump\b)/i.test(message);
+};
+
 const groupEntries = (body, titles) => {
   const sections = new Map([...categories.keys()].map((category) => [category, []]));
   const preserved = [];
@@ -66,11 +75,16 @@ try {
 
   // Compare exact titles against list entries in every section, including published releases.
   const knownTitles = new Set([...changelog.matchAll(/^[ \t]*[-*+] (.+)\r?$/gm)].map((match) => match[1].trim()));
-  const history = git('log', '--format=%s%x00', 'HEAD');
+  // Use the same subject recognition for the release boundary and excluded bumps.
+  const lastBump = git('log', '--topo-order', '--no-merges', '--format=%H%x09%s', 'HEAD')
+    .split('\n')
+    .find((line) => isVersionBump(line.slice(line.indexOf('\t') + 1)))
+    ?.split('\t')[0];
+  const history = git('log', '--no-merges', '--format=%s%x00', lastBump ? `${lastBump}..HEAD` : 'HEAD');
   const newTitles = [];
   for (const subject of history.split('\0')) {
     const title = subject.trim();
-    if (!title || title === ':memo: Update changelog' || knownTitles.has(title)) {
+    if (!title || title === ':memo: Update changelog' || isVersionBump(title) || knownTitles.has(title)) {
       continue;
     }
     newTitles.push(title);
