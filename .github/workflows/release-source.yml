@@ -1,0 +1,31 @@
+name: Release source
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions: {}
+
+jobs:
+  release-source:
+    name: Validate release source
+    runs-on: ubuntu-latest
+    permissions: {}
+
+    steps:
+      - name: Check release branch
+        env:
+          HEAD_BRANCH: ${{ github.head_ref }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          if [[ "$HEAD_REPOSITORY" != "$BASE_REPOSITORY" ]]; then
+            echo "::error::The release must originate from the same repository."
+            exit 1
+          fi
+
+          if [[ "$HEAD_BRANCH" != release/?* ]]; then
+            echo "::error::Only release/* branches can be merged into main."
+            exit 1
+          fi
