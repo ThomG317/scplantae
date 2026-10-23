@@ -4,4 +4,4 @@
 
 ### Added
 
-- Initial Vue, TypeScript, and Vite project setup.
+- :tada: Initial Vue, TypeScript, and Vite project setup.
