@@ -1,0 +1,156 @@
+/* Local background layers must not leak into descendant controls. */
+@property --_bg-gradient {
+  syntax: '*';
+  inherits: false;
+  initial-value: linear-gradient(transparent, transparent);
+}
+
+@property --_state-overlay {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
+@utility bg-neutral {
+  background-color: var(--bg-neutral);
+}
+
+@utility bg-neutral-light {
+  background-color: var(--bg-neutral-light);
+}
+
+@utility bg-neutral-lighter {
+  background-color: var(--bg-neutral-lighter);
+}
+
+@utility bg-neutral-lightest {
+  background-color: var(--bg-neutral-lightest);
+}
+
+@utility bg-primary {
+  background-color: var(--bg-primary);
+}
+
+@utility bg-primary-light {
+  background-color: var(--bg-primary-light);
+}
+
+@utility bg-success-light {
+  background-color: var(--bg-success-light);
+}
+
+@utility bg-info-light {
+  background-color: var(--bg-info-light);
+}
+
+@utility bg-warning-light {
+  background-color: var(--bg-warning-light);
+}
+
+@utility bg-error {
+  background-color: var(--bg-error);
+}
+
+@utility bg-error-light {
+  background-color: var(--bg-error-light);
+}
+
+@utility bg-disabled {
+  background-color: var(--bg-disabled);
+}
+
+@utility text-neutral {
+  color: var(--text-neutral);
+}
+
+@utility text-neutral-light {
+  color: var(--text-neutral-light);
+}
+
+@utility text-primary {
+  color: var(--text-primary);
+}
+
+@utility text-on-dark {
+  color: var(--text-on-dark);
+}
+
+@utility text-success {
+  color: var(--text-success);
+}
+
+@utility text-info {
+  color: var(--text-info);
+}
+
+@utility text-warning {
+  color: var(--text-warning);
+}
+
+@utility text-error {
+  color: var(--text-error);
+}
+
+@utility text-disabled {
+  color: var(--text-disabled);
+}
+
+@utility border-card {
+  border-color: var(--border-card);
+}
+
+@utility border-neutral {
+  border-color: var(--border-neutral);
+}
+
+@utility border-neutral-light {
+  border-color: var(--border-neutral-light);
+}
+
+@utility border-success {
+  border-color: var(--border-success);
+}
+
+@utility border-error {
+  border-color: var(--border-error);
+}
+
+@utility state-on-hover {
+  --_state-overlay: var(--state-on-hover);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility state-on-active {
+  --_state-overlay: var(--state-on-active);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility state-on-dark-hover {
+  --_state-overlay: var(--state-on-dark-hover);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility state-on-dark-active {
+  --_state-overlay: var(--state-on-dark-active);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility bg-gradient-a11y {
+  --_bg-gradient: var(--bg-gradient-a11y);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility bg-gradient-page {
+  --_bg-gradient: var(--bg-gradient-page);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility bg-gradient-primary {
+  --_bg-gradient: var(--bg-gradient-primary);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility bg-gradient-primary-dark {
+  --_bg-gradient: var(--bg-gradient-primary-dark);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}

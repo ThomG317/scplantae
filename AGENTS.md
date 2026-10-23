@@ -46,14 +46,15 @@ Use:
 - Vue Router;
 - Pinia;
 - npm;
-- SCSS;
-- BEM for CSS class naming;
+- Tailwind CSS with the Vite plugin;
+- native CSS;
+- BEM-style naming for custom CSS classes, with the modifier convention defined below;
 - Vitest;
 - Vue Test Utils.
 
 Do not use:
 
-- Tailwind CSS;
+- Sass/SCSS or another CSS preprocessor;
 - a UI component library unless explicitly approved.
 
 The frontend is intended to connect to Supabase later. Do not implement or configure Supabase until requested.
@@ -106,9 +107,37 @@ Avoid overtyping local variables and obvious return values.
 
 ## Styling
 
-Use SCSS and BEM.
+Use Tailwind CSS and native CSS, without Sass/SCSS.
 
-Do not introduce Tailwind CSS or another styling system without validation.
+Use Tailwind utility classes directly in templates for layout, spacing, sizing, positioning, alignment, and their responsive variants.
+
+Use custom classes with `@apply` for visual styling: colors, typography, borders, radii, shadows, transitions, and visual states. Keep responsive variants of visual styles in these classes too.
+
+Exception: static text within a page may use Tailwind typography and text color utilities directly in the template, including responsive variants. A custom class is not required solely to style static page text. Continue using project tokens.
+
+Write one `@apply` statement for the base appearance and one separate statement per state (hover, active, focus-visible, disabled, etc.). Prefer native states where available. Guard hover and active styles with `enabled:` when they should not apply to disabled controls.
+
+Add smooth transitions for interactive visual state changes (hover, active, focus, disabled, etc.). Default to `duration-200 ease-out`, target only the properties that change, and include `motion-reduce:transition-none`. Keep focus indicators immediately visible. For state overlays, transition the registered color property `--_state-overlay`, not `background-image`; keep the composed background layers present in the base style so transitions also work when leaving a state. Avoid `transition-all`.
+
+When listing internal properties containing underscores in `transition-property`, use a native CSS declaration; Tailwind arbitrary values interpret unescaped underscores as spaces.
+
+Complex layouts may use a custom class with `@apply`. Use plain CSS declarations when they express a complex rule more clearly; do not force everything into utilities or arbitrary values.
+
+Keep global styles in `src/assets/css/`, with `main.css` as the single entry imported by `src/main.ts`. This directory contains the Tailwind integration and, when defined, design tokens and global base styles. Create additional files only when needed and import them from this entry. Tailwind Preflight provides the initial reset; do not add another reset without a demonstrated need and validation.
+
+Use `<style scoped>` without a `lang` attribute for component styles. When using Tailwind directives such as `@apply`, add `@reference` pointing to the global Tailwind entry (`src/assets/css/main.css`), using the appropriate relative path.
+
+Name custom classes as `block` and `block__element`. Add modifiers as separate classes named `-modifier`, and always qualify their selectors with the base class: `.block.-modifier` or `.block__element.-modifier`. Never define standalone global modifier selectors.
+
+Design tokens use CSS custom properties as their source of truth: primitive palette values feed semantic tokens. Expose all semantic color tokens through explicit `@utility` definitions: `--bg-*` maps to `bg-*` (`background-color`), `--text-*` to `text-*` (`color`), and `--border-*` to `border-*` (`border-color`). Utilities must reference the semantic CSS custom property, not its resolved palette value. Custom CSS consumes the same properties. Do not duplicate tokens in another variable system.
+
+Keep palette values in `src/assets/css/palette.css`, semantic colors and state overlays in `tokens/colors.css`, typography in `tokens/typography.css`, shadows in `tokens/shadows.css`, background gradients in `tokens/gradients.css`, and custom Tailwind mappings in `utilities.css`. Import all token files from `main.css`. The palette is available only to define semantic tokens; do not expose palette utilities or consume raw palette values in components. The default `:root` semantic values represent the light theme. Future light/dark theming must override these same semantic properties so component classes remain unchanged. Do not invent dark values or choose a theme switching mechanism before requested.
+
+Use semantic tokens for component appearance rather than raw palette values. The user defines token names and values; do not invent or rename them without validation.
+
+Define font sizes (`--text-*`), font weights (`--font-weight-*`), and box shadows (`--shadow-*`) in `@theme` in their respective token files. Keep size and weight separate: combine utilities such as `text-xl font-extrabold` in custom component classes. Do not add line heights unless defined by the user. Reset the default `--color-*`, `--text-*`, `--font-weight-*`, and `--shadow-*` theme namespaces to `initial` in their respective token files before defining project values, so the default catalogs do not remain alongside project tokens. Preserve Tailwind's layout, spacing, and responsive defaults.
+
+State overlay tokens (`--state-on-*`) use `color-mix()` with a semantic background token and transparency. Their matching `state-on-*` utilities compose a uniform overlay above the background gradient, preserving the background color and content opacity. Apply them through the appropriate hover/active variants. Background gradient tokens (`--bg-gradient-*`) map to matching `bg-gradient-*` utilities. Gradient and state utilities share a two-layer `background-image` composition using non-inheriting internal CSS properties (`--_state-overlay` and `--_bg-gradient`), with transparent defaults so they also work independently and do not leak into descendants. The overlay property is registered as `<color>` so it can interpolate smoothly. Other background images require explicit composition. The `on-dark` suffix describes the background they are used on, not the application's color mode.
 
 Prefer semantic HTML and accessible native elements over custom equivalents.
 
@@ -198,7 +227,7 @@ When preparing a release:
 1. Create `release/x.y.z` from `develop`.
 2. Default to incrementing the patch version unless another version is explicitly chosen.
 3. Update the version in `package.json` and related lockfile metadata.
-4. Finalize the corresponding `CHANGELOG.md` entry.
+4. Write the corresponding `CHANGELOG.md` entry from the changes included in the release.
 5. Commit the version bump on the release branch.
 6. Merge the release branch into `main` after validation.
 
@@ -212,9 +241,7 @@ Do not infer major/minor/patch automatically from Gitmoji or commit messages.
 
 ## CHANGELOG
 
-Maintain `CHANGELOG.md`.
-
-During development, changes belong to the upcoming release.
+Update `CHANGELOG.md` only when preparing a release. Do not add entries during ordinary development tasks. During release preparation, summarize the changes included in that release.
 
 The final version number is chosen manually when the release is prepared.
 
