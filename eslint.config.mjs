@@ -1,23 +1,17 @@
 import eslint from '@eslint/js';
 import globals from 'globals';
 import prettier from 'eslint-config-prettier';
-import vue from 'eslint-plugin-vue';
-import vueParser from 'vue-eslint-parser';
+import reactHooks from 'eslint-plugin-react-hooks';
+import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   { ignores: ['dist/**'] },
   eslint.configs.recommended,
-  ...vue.configs['flat/recommended'],
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.vue'],
-    languageOptions: {
-      parser: vueParser,
-      parserOptions: {
-        parser: tseslint.parser,
-      },
-    },
+    files: ['**/*.{ts,tsx}'],
+    extends: [reactHooks.configs.flat.recommended, reactRefresh.configs.vite],
   },
   {
     rules: {
@@ -29,7 +23,6 @@ export default tseslint.config(
       eqeqeq: 'error',
       'no-var': 'error',
       'prefer-const': 'error',
-      'vue/no-mutating-props': 'error',
     },
   },
   {

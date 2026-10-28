@@ -40,17 +40,19 @@ Never turn an assumption into a project decision.
 
 Use:
 
-- Vue 3;
+- React and React DOM, using stable releases;
 - TypeScript;
 - Vite;
-- Vue Router;
-- Pinia;
+- React Router in declarative mode;
+- Zustand;
 - npm;
 - Tailwind CSS with the Vite plugin;
-- native CSS;
+- native CSS with CSS Modules for component styles;
 - BEM-style naming for custom CSS classes, with the modifier convention defined below;
 - Vitest;
-- Vue Test Utils.
+- React Testing Library.
+
+Use React's built-in state for local component state. Use Zustand when shared state is needed; do not create stores before they have a concrete use.
 
 Do not use:
 
@@ -67,27 +69,23 @@ Keep the initial project minimal.
 
 Do not create demo pages, demo components, sample assets, counters, or other starter content.
 
-Initially, `App.vue` must only render:
-
-`Test`
-
-Use a conventional Vue project structure, but create directories such as `components`, `views`, `stores`, `composables`, `services`, or `types` only when they are actually needed.
+Use a conventional React project structure, but create directories such as `components`, `views`, `stores`, `hooks`, `services`, or `types` only when they are actually needed.
 
 Configure the `@/` alias for `src/`.
 
 ## Naming
 
-Vue component files use PascalCase:
+React component files use PascalCase and the `.tsx` extension:
 
-- `ProducerCard.vue`
-- `ProducerDetails.vue`
+- `ProducerCard.tsx`
+- `ProducerDetails.tsx`
 
 TypeScript files use camelCase where appropriate:
 
 - `useProducer.ts`
 - `producerService.ts`
 
-Vue component names should be multi-word except for `App`.
+Use function components with PascalCase names. Custom hook names start with `use`.
 
 ## TypeScript
 
@@ -109,11 +107,11 @@ Avoid overtyping local variables and obvious return values.
 
 Use Tailwind CSS and native CSS, without Sass/SCSS.
 
-Use Tailwind utility classes directly in templates for layout, spacing, sizing, positioning, alignment, and their responsive variants.
+Use Tailwind utility classes directly in JSX for layout, spacing, sizing, positioning, alignment, and their responsive variants.
 
 Use custom classes with `@apply` for visual styling: colors, typography, borders, radii, shadows, transitions, and visual states. Keep responsive variants of visual styles in these classes too.
 
-Exception: static text within a page may use Tailwind typography and text color utilities directly in the template, including responsive variants. A custom class is not required solely to style static page text. Continue using project tokens.
+Exception: static text within a page may use Tailwind typography and text color utilities directly in JSX, including responsive variants. A custom class is not required solely to style static page text. Continue using project tokens.
 
 Write one `@apply` statement for the base appearance and one separate statement per state (hover, active, focus-visible, disabled, etc.). Prefer native states where available. Guard hover and active styles with `enabled:` when they should not apply to disabled controls.
 
@@ -123,9 +121,9 @@ When listing internal properties containing underscores in `transition-property`
 
 Complex layouts may use a custom class with `@apply`. Use plain CSS declarations when they express a complex rule more clearly; do not force everything into utilities or arbitrary values.
 
-Keep global styles in `src/assets/css/`, with `main.css` as the single entry imported by `src/main.ts`. This directory contains the Tailwind integration and, when defined, design tokens and global base styles. Create additional files only when needed and import them from this entry. Tailwind Preflight provides the initial reset; do not add another reset without a demonstrated need and validation.
+Keep global styles in `src/assets/css/`, with `main.css` as the single entry imported by `src/main.tsx`. This directory contains the Tailwind integration and, when defined, design tokens and global base styles. Create additional files only when needed and import them from this entry. Tailwind Preflight provides the initial reset; do not add another reset without a demonstrated need and validation.
 
-Use `<style scoped>` without a `lang` attribute for component styles. When using Tailwind directives such as `@apply`, add `@reference` pointing to the global Tailwind entry (`src/assets/css/main.css`), using the appropriate relative path.
+Use CSS Modules named after the component, such as `ProducerCard.module.css`, for component styles. Access custom classes through the imported module in JSX, including modifier classes. When using Tailwind directives such as `@apply`, add `@reference` pointing to the global Tailwind entry (`src/assets/css/main.css`), using the appropriate relative path.
 
 Name custom classes as `block` and `block__element`. Add modifiers as separate classes named `-modifier`, and always qualify their selectors with the base class: `.block.-modifier` or `.block__element.-modifier`. Never define standalone global modifier selectors.
 
@@ -147,7 +145,7 @@ Do not introduce design tokens, a Design System, or UI abstractions before they 
 
 ## ESLint and Prettier
 
-Use the recommended Vue and TypeScript ESLint configurations as the baseline.
+Use the recommended JavaScript, TypeScript, and React Hooks ESLint configurations, along with the React Refresh Vite configuration, as the baseline.
 
 Apply these conventions:
 
@@ -159,7 +157,7 @@ Apply these conventions:
 - line endings: LF;
 - arrow function parentheses: always;
 - quote properties: as needed;
-- Vue attributes: one per line when multiline;
+- JSX attributes: one per line when multiline;
 - `console`: warning;
 - `debugger`: error;
 - explicit `any`: warning;
@@ -168,13 +166,13 @@ Apply these conventions:
 - disallow `var`;
 - prefer `const` when possible;
 - do not enforce artificial import ordering;
-- do not mutate Vue props.
+- do not mutate React props or state.
 
 Formatting concerns should be handled by Prettier rather than duplicated in ESLint where possible.
 
 ## Tests
 
-Use Vitest and Vue Test Utils.
+Use Vitest and React Testing Library.
 
 Test meaningful behavior. Do not write tests solely to increase coverage.
 

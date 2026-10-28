@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath, URL } from 'node:url';
 import { copyFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import vue from '@vitejs/plugin-vue';
+import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
@@ -30,7 +30,7 @@ export default defineConfig(({ command, mode }) => {
     define: {
       __APP_VERSION__: JSON.stringify(packageJson.version),
     },
-    plugins: [vue(), tailwindcss()],
+    plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
