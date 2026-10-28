@@ -47,7 +47,7 @@ Use:
 - Zustand;
 - npm;
 - Tailwind CSS with the Vite plugin;
-- native CSS with CSS Modules for component styles;
+- native CSS with one regular CSS file per component;
 - BEM-style naming for custom CSS classes, with the modifier convention defined below;
 - Vitest;
 - React Testing Library.
@@ -123,9 +123,9 @@ Complex layouts may use a custom class with `@apply`. Use plain CSS declarations
 
 Keep global styles in `src/assets/css/`, with `main.css` as the single entry imported by `src/main.tsx`. This directory contains the Tailwind integration and, when defined, design tokens and global base styles. Create additional files only when needed and import them from this entry. Tailwind Preflight provides the initial reset; do not add another reset without a demonstrated need and validation.
 
-Use CSS Modules named after the component, such as `ProducerCard.module.css`, for component styles. Access custom classes through the imported module in JSX, including modifier classes. When using Tailwind directives such as `@apply`, add `@reference` pointing to the global Tailwind entry (`src/assets/css/main.css`), using the appropriate relative path.
+Use regular CSS files named after the component, such as `ProducerCard.css`, imported directly by that component (`import './ProducerCard.css';`). Classes are global; use a distinct BEM block for each component. Use plain strings for static `className` values and `classNames` from the `classnames` package when combining classes conditionally. When using Tailwind directives such as `@apply`, add `@reference` pointing to the global Tailwind entry (`src/assets/css/main.css`), using the appropriate relative path.
 
-Name custom classes as `block` and `block__element`. Add modifiers as separate classes named `-modifier`, and always qualify their selectors with the base class: `.block.-modifier` or `.block__element.-modifier`. Never define standalone global modifier selectors.
+Prefix every project-defined custom CSS class with `sc-`. Name BEM classes as `sc-block` and `sc-block__element`. Add modifiers as separate classes named `sc-modifier`, and always qualify their selectors with the base class: `.sc-block.sc-modifier` or `.sc-block__element.sc-modifier`. Never define standalone modifier selectors. Keep Tailwind utilities and third-party classes such as `material-symbols-rounded` unchanged.
 
 Design tokens use CSS custom properties as their source of truth: primitive palette values feed semantic tokens. Expose all semantic color tokens through explicit `@utility` definitions: `--bg-*` maps to `bg-*` (`background-color`), `--text-*` to `text-*` (`color`), and `--border-*` to `border-*` (`border-color`). Utilities must reference the semantic CSS custom property, not its resolved palette value. Custom CSS consumes the same properties. Do not duplicate tokens in another variable system.
 
@@ -135,13 +135,28 @@ Use semantic tokens for component appearance rather than raw palette values. The
 
 Define font sizes (`--text-*`), font weights (`--font-weight-*`), and box shadows (`--shadow-*`) in `@theme` in their respective token files. Keep size and weight separate: combine utilities such as `text-xl font-extrabold` in custom component classes. Do not add line heights unless defined by the user. Reset the default `--color-*`, `--text-*`, `--font-weight-*`, and `--shadow-*` theme namespaces to `initial` in their respective token files before defining project values, so the default catalogs do not remain alongside project tokens. Preserve Tailwind's layout, spacing, and responsive defaults.
 
-State overlay tokens (`--state-on-*`) use `color-mix()` with a semantic background token and transparency. Their matching `state-on-*` utilities compose a uniform overlay above the background gradient, preserving the background color and content opacity. Apply them through the appropriate hover/active variants. Background gradient tokens (`--bg-gradient-*`) map to matching `bg-gradient-*` utilities. Gradient and state utilities share a two-layer `background-image` composition using non-inheriting internal CSS properties (`--_state-overlay` and `--_bg-gradient`), with transparent defaults so they also work independently and do not leak into descendants. The overlay property is registered as `<color>` so it can interpolate smoothly. Other background images require explicit composition. The `on-dark` suffix describes the background they are used on, not the application's color mode.
+State tokens (`--state-on-*`) use the values defined in Figma. Neutral and primary state tokens use the supplied solid colors; on-dark overlay tokens use `color-mix()` with a semantic background token and transparency. Their matching `state-on-*` utilities compose a uniform overlay above the background gradient, preserving the background color and content opacity. Apply them through the appropriate hover/active variants. Background gradient tokens (`--bg-gradient-*`) map to matching `bg-gradient-*` utilities. Gradient and state utilities share a two-layer `background-image` composition using non-inheriting internal CSS properties (`--_state-overlay` and `--_bg-gradient`), with transparent defaults so they also work independently and do not leak into descendants. The overlay property is registered as `<color>` so it can interpolate smoothly. Other background images require explicit composition. The `on-dark` suffix describes the background they are used on, not the application's color mode.
 
 Prefer semantic HTML and accessible native elements over custom equivalents.
 
 Target WCAG 2.2 AA.
 
 Do not introduce design tokens, a Design System, or UI abstractions before they are needed or explicitly defined.
+
+### Icons
+
+Use Material Symbols Rounded, weight 500, loaded through a `<link>` in `index.html`. Do not add an icon library dependency.
+
+Render icons using their ligature name:
+`<span className="material-symbols-rounded">search</span>`.
+
+Set icon size according to the usage context in the component's CSS file, using existing typography utilities where appropriate. Do not define a global icon size.
+
+Rely on the Google Fonts stylesheet for the base `.material-symbols-rounded` styles. Do not duplicate them locally.
+
+Keep the `icon_names` parameter in the Google Fonts URL synchronized with the icons used by the application, in alphabetical order.
+
+Mark decorative icons with `aria-hidden="true"`. Give icon-only controls an accessible name on the control itself.
 
 ## ESLint and Prettier
 
