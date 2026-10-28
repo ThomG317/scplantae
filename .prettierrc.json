@@ -6,6 +6,5 @@
   "tabWidth": 2,
   "endOfLine": "lf",
   "arrowParens": "always",
-  "quoteProps": "as-needed",
-  "vueIndentScriptAndStyle": false
+  "quoteProps": "as-needed"
 }
