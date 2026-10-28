@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import authApi from '@/api/authApi.ts';
-import styles from './App.module.css';
-
-const appVersion = __APP_VERSION__;
+import logo from '@/assets/images/logo.svg';
+import classNames from 'classnames';
+import './App.css';
 
 type LoginFormValues = {
   email: string;
@@ -11,78 +11,83 @@ type LoginFormValues = {
 };
 
 export default function App() {
-  const { register, handleSubmit } = useForm<LoginFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<LoginFormValues>({
     defaultValues: {
       email: '',
       password: '',
     },
   });
-  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string; description?: string } | null>(null);
 
   async function handleLogin({ email, password }: LoginFormValues) {
     setFeedback(null);
 
     try {
       await authApi.login(email, password);
-      setFeedback({ type: 'success', message: 'Connexion réussie ! Le test est concluant, la suite prend racine.' });
+      setFeedback({ type: 'success', message: 'Connexion réussie !', description: 'Le test est concluant, la suite prend racine.' });
     } catch (error) {
       console.error(error);
-      setFeedback({ type: 'error', message: 'La connexion a échoué. Vérifiez vos identifiants et réessayez.' });
+      setFeedback({ type: 'error', message: 'Identifiant ou mot de passe invalide' });
     }
   }
 
   return (
-    <main className={`${styles['app-shell']} grid min-h-dvh grid-cols-1 gap-8 p-4 sm:p-6 lg:grid-cols-5 lg:gap-0`}>
-      <section className={`${styles['brand-panel']} hidden flex-col items-center justify-center gap-6 px-6 py-12 text-center sm:px-10 lg:col-span-2 lg:flex lg:py-16`} aria-labelledby="brand-title">
-        <div className={`${styles['brand-panel__mark']} flex size-20 items-center justify-center sm:size-24`} aria-hidden="true">
-          S&amp;C
+    <main className="sc-app-shell flex min-h-dvh items-center justify-center p-4 sm:p-6">
+      <section className="sc-connection-panel flex w-full max-w-[500px] flex-col items-center overflow-hidden" aria-labelledby="connection-title">
+        <div className="flex w-full flex-col items-center">
+          <div className="sc-connection-panel__banner h-[140px] w-full" />
+          <div className="sc-connection-panel__logo relative -mt-[72px] flex size-36 shrink-0 items-center justify-center pt-3">
+            <img src={logo} alt="S&C Plantaé" width="84.0459" height="41.6842" />
+          </div>
         </div>
-        <div className="flex max-w-sm flex-col gap-3">
-          <h1 id="brand-title" className="text-xl font-extrabold lg:text-2xl">
-            S&amp;C Plantaé – l’App
-          </h1>
-          <p className="text-base">Un espace pour cultiver le conseil.</p>
-        </div>
-      </section>
 
-      <section className="connection-panel flex flex-col items-center justify-center px-2 pb-6 sm:px-8 lg:col-span-3 lg:px-12 lg:py-12" aria-labelledby="connection-title">
-        <div className="flex w-full max-w-md flex-col gap-10">
-          <header className="flex flex-col gap-3 text-center">
-            <h2 id="connection-title" className="text-2xl font-extrabold">
+        <div className="flex w-full flex-col gap-12 p-6 sm:p-10">
+          <header className="flex flex-col gap-2 text-center">
+            <h1 id="connection-title" className="text-2xl font-extrabold">
               Se connecter
-            </h2>
-            <p className="text-sm text-neutral-light">Le projet prend racine. En attendant, la connexion est prête à être testée.</p>
+            </h1>
+            <p className="text-base text-neutral-light">Accédez à votre espace S&amp;C Plantaé</p>
           </header>
 
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit(handleLogin)}>
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold" htmlFor="email">
-                Adresse e-mail
-              </label>
-              <input id="email" {...register('email')} className={`${styles['connection-panel__input']} w-full px-4 py-3`} type="email" autoComplete="username" required />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold" htmlFor="password">
-                Mot de passe
-              </label>
-              <input id="password" {...register('password')} className={`${styles['connection-panel__input']} w-full px-4 py-3`} type="password" autoComplete="current-password" required />
-            </div>
-
-            <button className={`${styles['connection-panel__submit']} ${styles['-primary']} mt-3 inline-flex min-h-12 items-center justify-center px-5 py-3`} type="submit">
-              Se connecter
-            </button>
-            <div role="status" aria-atomic="true">
+          <form className="flex flex-col gap-8" onSubmit={handleSubmit(handleLogin)} aria-busy={isSubmitting}>
+            <div role="status" aria-atomic="true" className={feedback ? undefined : 'hidden'}>
               {feedback && (
-                <p className={`${styles['connection-panel__feedback']} ${styles[`-${feedback.type}`]} px-4 py-3`}>
-                  <strong className="block mb-1">{feedback.type === 'success' ? 'Tout est bon !' : 'Connexion impossible'}</strong>
-                  {feedback.message}
-                </p>
+                <div className="sc-connection-panel__feedback flex items-start gap-3 p-3">
+                  <span className={classNames('sc-connection-panel__feedback-icon flex size-8 shrink-0 items-center justify-center', `sc-${feedback.type}`)} aria-hidden="true">
+                    <span className="material-symbols-rounded sc-connection-panel__symbol">{feedback.type === 'error' ? 'cancel' : 'check_circle'}</span>
+                  </span>
+                  <div className="flex min-h-8 min-w-0 flex-1 flex-col justify-center gap-1">
+                    <p className="sc-connection-panel__feedback-text">{feedback.message}</p>
+                    {feedback.description && <p className="sc-connection-panel__feedback-description">{feedback.description}</p>}
+                  </div>
+                </div>
               )}
             </div>
-          </form>
 
-          <p className="text-xs text-neutral-light text-center">Version {appVersion} · En cours de création</p>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="sc-connection-panel__label pl-1" htmlFor="email">
+                  Adresse email
+                </label>
+                <input id="email" {...register('email')} className="sc-connection-panel__input min-h-10 w-full px-3.5 py-1.5" type="email" autoComplete="username" required />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="sc-connection-panel__label pl-1" htmlFor="password">
+                  Mot de passe
+                </label>
+                <input id="password" {...register('password')} className="sc-connection-panel__input min-h-10 w-full px-3.5 py-1.5" type="password" autoComplete="current-password" required />
+              </div>
+            </div>
+
+            <button className="sc-connection-panel__submit inline-flex min-h-10 min-w-10 items-center justify-center px-4 py-2" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Connexion en cours…' : 'Se connecter'}
+            </button>
+          </form>
         </div>
       </section>
     </main>

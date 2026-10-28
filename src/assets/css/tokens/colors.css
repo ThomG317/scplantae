@@ -12,29 +12,46 @@
   --bg-primary-light: var(--palette-green-200);
   --bg-success-light: var(--palette-green-200);
   --bg-info-light: var(--palette-blue-200);
-  --bg-warning-light: #f7f2dfff;
-  --bg-error: #ac4545ff;
-  --bg-error-light: #f9e8e8ff;
+  --bg-warning-light: #f7f2df;
+  --bg-error: #c55959;
+  --bg-error-light: #f9e8e8;
+  --bg-success: var(--palette-green-700);
+  --bg-warning: #b59a2c;
+  --bg-info: var(--palette-blue-600);
   --bg-disabled: var(--palette-neutral-100);
 
   --text-neutral: var(--palette-neutral-900);
   --text-neutral-light: var(--palette-neutral-500);
-  --text-primary: var(--palette-green-800);
+  --text-primary: var(--palette-green-700);
   --text-on-dark: var(--palette-neutral-white);
-  --text-success: var(--palette-green-800);
-  --text-info: var(--palette-blue-800);
-  --text-warning: #7b6b2dff;
-  --text-error: #ac4545ff;
+  --text-success: var(--palette-green-700);
+  --text-info: var(--palette-blue-700);
+  --text-warning: #7b6b2d;
+  --text-error: #ac4545;
+  --text-error-icon: var(--bg-error);
+  --text-warning-icon: var(--bg-warning);
+  --text-info-icon: var(--palette-blue-600);
+  --text-success-icon: var(--palette-green-600);
   --text-disabled: var(--palette-neutral-500);
 
-  --border-card: var(--palette-neutral-200);
+  --border-card: var(--palette-neutral-100);
   --border-neutral: var(--palette-neutral-900);
   --border-neutral-light: var(--palette-neutral-400);
   --border-success: var(--palette-green-700);
-  --border-error: #ac4545ff;
+  --border-neutral-lighter: var(--palette-neutral-200);
+  --border-success-light: var(--palette-green-300);
+  --border-info-light: var(--palette-blue-300);
+  --border-warning-light: #e8d9a1;
+  --border-error-light: #eebebe;
+  --border-primary: var(--palette-green-700);
+  --border-info: var(--palette-blue-600);
+  --border-warning: var(--bg-warning);
+  --border-error: #c55959;
 
-  --state-on-hover: color-mix(in srgb, var(--bg-neutral) 8%, transparent);
-  --state-on-active: color-mix(in srgb, var(--bg-neutral) 16%, transparent);
+  --state-on-hover-neutral: var(--palette-neutral-200);
+  --state-on-active-neutral: var(--palette-neutral-300);
+  --state-on-hover-primary: var(--palette-green-200);
+  --state-on-active-primary: var(--palette-green-300);
   --state-on-dark-hover: color-mix(in srgb, var(--bg-neutral-lightest) 20%, transparent);
   --state-on-dark-active: color-mix(in srgb, var(--bg-neutral) 20%, transparent);
 }

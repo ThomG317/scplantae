@@ -115,13 +115,13 @@
   border-color: var(--border-error);
 }
 
-@utility state-on-hover {
-  --_state-overlay: var(--state-on-hover);
+@utility state-on-hover-neutral {
+  --_state-overlay: var(--state-on-hover-neutral);
   background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
 }
 
-@utility state-on-active {
-  --_state-overlay: var(--state-on-active);
+@utility state-on-active-neutral {
+  --_state-overlay: var(--state-on-active-neutral);
   background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
 }
 
@@ -152,5 +152,75 @@
 
 @utility bg-gradient-primary-dark {
   --_bg-gradient: var(--bg-gradient-primary-dark);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility bg-success {
+  background-color: var(--bg-success);
+}
+
+@utility bg-warning {
+  background-color: var(--bg-warning);
+}
+
+@utility bg-info {
+  background-color: var(--bg-info);
+}
+
+@utility text-error-icon {
+  color: var(--text-error-icon);
+}
+
+@utility text-warning-icon {
+  color: var(--text-warning-icon);
+}
+
+@utility text-info-icon {
+  color: var(--text-info-icon);
+}
+
+@utility text-success-icon {
+  color: var(--text-success-icon);
+}
+
+@utility border-neutral-lighter {
+  border-color: var(--border-neutral-lighter);
+}
+
+@utility border-success-light {
+  border-color: var(--border-success-light);
+}
+
+@utility border-info-light {
+  border-color: var(--border-info-light);
+}
+
+@utility border-warning-light {
+  border-color: var(--border-warning-light);
+}
+
+@utility border-error-light {
+  border-color: var(--border-error-light);
+}
+
+@utility border-primary {
+  border-color: var(--border-primary);
+}
+
+@utility border-info {
+  border-color: var(--border-info);
+}
+
+@utility border-warning {
+  border-color: var(--border-warning);
+}
+
+@utility state-on-hover-primary {
+  --_state-overlay: var(--state-on-hover-primary);
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+}
+
+@utility state-on-active-primary {
+  --_state-overlay: var(--state-on-active-primary);
   background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
 }

@@ -1,0 +1,78 @@
+@reference './assets/css/main.css';
+
+.sc-app-shell {
+  @apply bg-gradient-page text-neutral font-regular;
+}
+
+.sc-connection-panel {
+  @apply rounded-[40px] border border-card bg-neutral-lightest shadow-card;
+}
+
+.sc-connection-panel__banner {
+  @apply bg-gradient-primary;
+}
+
+.sc-connection-panel__logo {
+  @apply rounded-full border-8 border-card bg-gradient-a11y;
+  border-color: var(--bg-neutral-lightest);
+}
+
+.sc-connection-panel__label {
+  @apply text-sm font-semibold text-neutral-light;
+  line-height: normal;
+}
+
+.sc-connection-panel__input {
+  @apply rounded-xl border border-neutral-light bg-neutral-lightest text-base text-neutral transition duration-200 ease-out motion-reduce:transition-none;
+  transition-property: color, background-color, border-color, --_state-overlay;
+  line-height: normal;
+  background-image: linear-gradient(var(--_state-overlay), var(--_state-overlay)), var(--_bg-gradient);
+  @apply placeholder:text-neutral-light;
+  @apply enabled:not-focus:hover:border-neutral enabled:not-focus:hover:state-on-hover-neutral;
+  @apply enabled:not-focus:active:border-neutral enabled:not-focus:active:state-on-active-neutral;
+  @apply focus:border-neutral focus:outline-2 focus:outline-offset-[-2px] focus:outline-(--border-neutral);
+  @apply disabled:border-transparent disabled:bg-disabled disabled:text-disabled;
+}
+
+.sc-connection-panel__submit {
+  @apply cursor-pointer rounded-xl border bg-gradient-a11y text-sm font-extrabold text-on-dark shadow-card tracking-[0.04em] transition duration-200 ease-out motion-reduce:transition-none;
+  border-color: color-mix(in srgb, var(--text-on-dark) 20%, transparent);
+  line-height: normal;
+  transition-property: color, background-color, border-color, box-shadow, opacity, --_state-overlay;
+  @apply enabled:hover:state-on-dark-hover;
+  @apply enabled:active:state-on-dark-active;
+  @apply focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--text-primary);
+  @apply disabled:cursor-wait disabled:border-transparent disabled:bg-neutral-light disabled:opacity-50 disabled:shadow-none;
+}
+
+.sc-connection-panel__submit:disabled {
+  --_bg-gradient: linear-gradient(transparent, transparent);
+}
+
+.sc-connection-panel__feedback {
+  @apply rounded-2xl border border-neutral-lighter bg-neutral-lightest;
+}
+
+.sc-connection-panel__feedback-text {
+  @apply text-sm font-extrabold tracking-[0.04em];
+}
+
+.sc-connection-panel__feedback-icon {
+  @apply rounded-lg;
+}
+
+.sc-connection-panel__feedback-description {
+  @apply text-sm font-regular text-neutral-light;
+}
+
+.sc-connection-panel__symbol {
+  @apply text-lg;
+}
+
+.sc-connection-panel__feedback-icon.sc-success {
+  @apply bg-success-light text-success-icon;
+}
+
+.sc-connection-panel__feedback-icon.sc-error {
+  @apply bg-error-light text-error-icon;
+}
